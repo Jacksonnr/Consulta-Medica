@@ -1,10 +1,10 @@
 package projeto_tomorrow.demo.Service;
 
 import org.springframework.stereotype.Service;
-import projeto_tomorrow.demo.Entity.DTO.UserDTORequest;
-import projeto_tomorrow.demo.Entity.DTO.UserDTOResponse;
+import projeto_tomorrow.demo.DTO.UserDTO.UserDTORequest;
+import projeto_tomorrow.demo.DTO.UserDTO.UserDTOResponse;
 import projeto_tomorrow.demo.Entity.User;
-import projeto_tomorrow.demo.UserRepository.UserRepository;
+import projeto_tomorrow.demo.Repository.UserRepository;
 
 import java.util.List;
 
@@ -17,35 +17,45 @@ public class UserService {
         this.repository = repository;
     }
 
-    public UserDTOResponse criar(UserDTORequest dtoRequest){
+    public UserDTOResponse criar(UserDTORequest dto){
 
         User user = new User();
-        user.setName(dtoRequest.name());
-        user.setEmail(dtoRequest.email());
-        user.setAge(dtoRequest.age());
+        user.setNome(dto.nome());
+        user.setEmail(dto.email());
+        user.setSenha(dto.senha());
 
         repository.save(user);
 
         return new UserDTOResponse(user.getId(),
-                user.getName(),
+                user.getNome(),
                 user.getEmail(),
-                user.getAge());
+                user.getRole());
     }
 
     public List<UserDTOResponse> listarTodos(){
-        return repository.findAll().stream().map(user -> new UserDTOResponse(user.getId(),
-                user.getName(),
+        return repository.findAll()
+                .stream()
+                .map(user -> new UserDTOResponse(user.getId(),
+                user.getNome(),
                 user.getEmail(),
-                user.getAge())).toList();
+                user.getRole())).toList();
     }
 
     public UserDTOResponse buscarPorId(Long id){
         User user = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
         return new UserDTOResponse(user.getId(),
-                user.getName(),
+                user.getNome(),
                 user.getEmail(),
-                user.getAge());
+                user.getRole());
+    }
+
+    public void deletar(Long id){
+        User user = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        repository.delete(user);
     }
 
 }

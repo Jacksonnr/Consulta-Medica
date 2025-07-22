@@ -3,8 +3,8 @@ package projeto_tomorrow.demo.Controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import projeto_tomorrow.demo.Entity.DTO.UserDTORequest;
-import projeto_tomorrow.demo.Entity.DTO.UserDTOResponse;
+import projeto_tomorrow.demo.DTO.UserDTO.UserDTORequest;
+import projeto_tomorrow.demo.DTO.UserDTO.UserDTOResponse;
 import projeto_tomorrow.demo.Service.UserService;
 
 import java.util.List;
@@ -36,6 +36,12 @@ public class UserController {
     public ResponseEntity<UserDTOResponse> listarUsuario(@PathVariable long id){
         UserDTOResponse userDTOResponse = userService.buscarPorId(id);
         return ResponseEntity.ok(userDTOResponse);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletarUsuario(@PathVariable long id){
+        userService.deletar(id);
+        return ResponseEntity.noContent().build();
     }
 
 }
