@@ -27,8 +27,8 @@ public class UserController {
     }
 
     @GetMapping
-    public List<UserDTOResponse> listarUsuarios (){
-        return userService.listarTodos();
+    public ResponseEntity<List<UserDTOResponse>> listarUsuarios (){
+        return ResponseEntity.ok(userService.listarTodos());
     }
 
 
