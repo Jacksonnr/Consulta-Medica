@@ -44,4 +44,12 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDTOResponse> atualizarUsuario(@PathVariable long id, @RequestBody UserDTORequest userDTORequest){
+        UserDTOResponse userDTOResponse = userService.atualizar(id, userDTORequest);
+        return ResponseEntity.ok(userDTOResponse);
+    }
+
+
+
 }

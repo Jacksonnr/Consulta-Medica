@@ -58,4 +58,19 @@ public class UserService {
         repository.delete(user);
     }
 
+    public UserDTOResponse atualizar(Long id, UserDTORequest dto){
+        User user = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        user.setNome(dto.nome());
+        user.setEmail(dto.email());
+        user.setSenha(dto.senha());
+
+        repository.save(user);
+
+        return new UserDTOResponse(user.getId(),
+                user.getNome(),
+                user.getEmail(),
+                user.getRole());
+    }
 }
