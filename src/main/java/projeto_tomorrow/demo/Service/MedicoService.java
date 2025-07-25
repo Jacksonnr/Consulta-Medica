@@ -30,7 +30,6 @@ public class MedicoService {
                     throw new RuntimeException("Email informado já cadastrado, recupere a senha ou insira outro email!");
                 });
 
-        // Criar o User primeiro
         User usuario = new User();
         usuario.setNome(dto.nome());
         usuario.setEmail(dto.email());

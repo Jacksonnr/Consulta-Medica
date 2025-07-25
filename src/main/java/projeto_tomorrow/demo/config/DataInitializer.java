@@ -3,21 +3,28 @@ package projeto_tomorrow.demo.config;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import projeto_tomorrow.demo.Entity.PerfilMedico;
+import projeto_tomorrow.demo.Entity.PerfilPaciente;
 import projeto_tomorrow.demo.Entity.User;
+import projeto_tomorrow.demo.Entity.enums.Convenio;
 import projeto_tomorrow.demo.Entity.enums.EspecialidadeMedica;
 import projeto_tomorrow.demo.Entity.enums.UserRole;
 import projeto_tomorrow.demo.Repository.MedicoRepository;
+import projeto_tomorrow.demo.Repository.PacienteRepository;
 import projeto_tomorrow.demo.Repository.UserRepository;
+
+import java.time.LocalDate;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
     private final MedicoRepository medicoRepository;
+    private final PacienteRepository pacienteRepository;
 
-    public DataInitializer(UserRepository userRepository, MedicoRepository medicoRepository) {
+    public DataInitializer(UserRepository userRepository, MedicoRepository medicoRepository, PacienteRepository pacienteRepository) {
         this.userRepository = userRepository;
         this.medicoRepository = medicoRepository;
+        this.pacienteRepository = pacienteRepository;
     }
 
     @Override
@@ -67,6 +74,16 @@ public class DataInitializer implements CommandLineRunner {
         medico3.setEspecialidade(EspecialidadeMedica.PEDIATRIA);
         medico3.setUsuario(savedUser3);
         medicoRepository.save(medico3);
+
+        // Criar perfis paciente
+        PerfilPaciente paciente1 = new PerfilPaciente();
+        paciente1.setDataNascimento(LocalDate.of(1990, 5, 15));
+        paciente1.setCpf("123.456.789-00");
+        paciente1.setTelefone("71912345678");
+        paciente1.setConvenio(Convenio.UNIMED);
+        paciente1.setNumeroCarteirinha("1010.432-24");
+        paciente1.setUsuario(paciente);
+        pacienteRepository.save(paciente1);
 
         System.out.println("Dados iniciais carregados com sucesso!");
     }
