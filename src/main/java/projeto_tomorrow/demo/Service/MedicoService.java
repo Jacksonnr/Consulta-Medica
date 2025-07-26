@@ -7,6 +7,8 @@ import projeto_tomorrow.demo.Entity.PerfilMedico;
 import projeto_tomorrow.demo.Entity.User;
 import projeto_tomorrow.demo.Entity.enums.EspecialidadeMedica;
 import projeto_tomorrow.demo.Entity.enums.UserRole;
+import projeto_tomorrow.demo.Exceptions.EmailAlreadyExistsException;
+import projeto_tomorrow.demo.Exceptions.NotFoundException;
 import projeto_tomorrow.demo.Repository.MedicoRepository;
 import projeto_tomorrow.demo.Repository.UserRepository;
 
@@ -27,7 +29,7 @@ public class MedicoService {
     public MedicoDTOResponse criar(MedicoDTORequest dto) {
         medicoRepository.findByUsuarioEmail(dto.email())
                 .ifPresent(existingEmail -> {
-                    throw new RuntimeException("Email informado já cadastrado, recupere a senha ou insira outro email!");
+                    throw new EmailAlreadyExistsException("Email informado já cadastrado, recupere a senha ou insira outro email!");
                 });
 
         User usuario = new User();
@@ -60,7 +62,7 @@ public class MedicoService {
         List<PerfilMedico> medicos = medicoRepository.findByEspecialidade(especialidade);
 
         if (medicos.isEmpty()) {
-            throw new RuntimeException("Nenhum médico encontrado para a especialidade: " + especialidade);
+            throw new NotFoundException("Nenhum médico encontrado para a especialidade: " + especialidade);
         }
 
         return medicos.stream()
@@ -83,7 +85,7 @@ public class MedicoService {
 
     public MedicoDTOResponse atualizar(Long id, MedicoDTORequest dto) {
         PerfilMedico medico = medicoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Médico não encontrado"));
+                .orElseThrow(() -> new NotFoundException("Médico não encontrado"));
 
         medico.getUsuario().setNome(dto.nome());
         medico.getUsuario().setEmail(dto.email());
@@ -100,7 +102,7 @@ public class MedicoService {
 
     public void deletar(Long id) {
         PerfilMedico medico = medicoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Médico não encontrado"));
+                .orElseThrow(() -> new NotFoundException("Médico não encontrado"));
 
         medicoRepository.delete(medico);
     }

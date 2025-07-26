@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import projeto_tomorrow.demo.DTO.UserDTO.UserDTORequest;
 import projeto_tomorrow.demo.DTO.UserDTO.UserDTOResponse;
 import projeto_tomorrow.demo.Entity.User;
+import projeto_tomorrow.demo.Exceptions.NotFoundException;
 import projeto_tomorrow.demo.Repository.UserRepository;
 
 import java.util.List;
@@ -43,7 +44,7 @@ public class UserService {
 
     public UserDTOResponse buscarPorId(Long id){
         User user = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new NotFoundException("Usuário não encontrado"));
 
         return new UserDTOResponse(user.getId(),
                 user.getNome(),
@@ -53,14 +54,14 @@ public class UserService {
 
     public void deletar(Long id){
         User user = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new NotFoundException("Usuário não encontrado"));
 
         repository.delete(user);
     }
 
     public UserDTOResponse atualizar(Long id, UserDTORequest dto){
         User user = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new NotFoundException("Usuário não encontrado"));
 
         user.setNome(dto.nome());
         user.setEmail(dto.email());
