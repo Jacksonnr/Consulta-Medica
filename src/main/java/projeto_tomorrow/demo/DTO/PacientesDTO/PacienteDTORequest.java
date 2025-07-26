@@ -19,9 +19,14 @@ public record PacienteDTORequest(
         @Past(message = "A data de nascimento deve ser anterior à data atual.")
         LocalDate dataNascimento,
 
-
+        @NotBlank(message = "O campo 'CPF' é obrigatório")
+        @Min(value = 11, message = "CPF inválido")
+        @Max(value = 14, message = "CPF inválido")
         String cpf,
+
+        @NotBlank(message = "O campo 'telefone' é obrigatório.")
         String telefone,
+
         Convenio convenio,
         String numeroCarteirinha
 ) {
