@@ -1,5 +1,8 @@
 package projeto_tomorrow.demo.Entity.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum EspecialidadeMedica {
     CARDIOLOGIA("Cardiologia"),
     DERMATOLOGIA("Dermatologia"),

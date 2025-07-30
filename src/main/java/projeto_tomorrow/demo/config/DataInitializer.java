@@ -1,31 +1,34 @@
 package projeto_tomorrow.demo.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import projeto_tomorrow.demo.DTO.ConsultaDTO.ConsultaDTORequest;
+import projeto_tomorrow.demo.Entity.Consulta;
 import projeto_tomorrow.demo.Entity.PerfilMedico;
 import projeto_tomorrow.demo.Entity.PerfilPaciente;
 import projeto_tomorrow.demo.Entity.User;
 import projeto_tomorrow.demo.Entity.enums.Convenio;
 import projeto_tomorrow.demo.Entity.enums.EspecialidadeMedica;
+import projeto_tomorrow.demo.Entity.enums.StatusConsulta;
 import projeto_tomorrow.demo.Entity.enums.UserRole;
+import projeto_tomorrow.demo.Repository.ConsultaRepository;
 import projeto_tomorrow.demo.Repository.MedicoRepository;
 import projeto_tomorrow.demo.Repository.PacienteRepository;
 import projeto_tomorrow.demo.Repository.UserRepository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Component
+@RequiredArgsConstructor
 public class DataInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
     private final MedicoRepository medicoRepository;
     private final PacienteRepository pacienteRepository;
+    private final ConsultaRepository consultaRepository;
 
-    public DataInitializer(UserRepository userRepository, MedicoRepository medicoRepository, PacienteRepository pacienteRepository) {
-        this.userRepository = userRepository;
-        this.medicoRepository = medicoRepository;
-        this.pacienteRepository = pacienteRepository;
-    }
 
     @Override
     public void run(String... args) throws Exception {
@@ -84,6 +87,15 @@ public class DataInitializer implements CommandLineRunner {
         paciente1.setNumeroCarteirinha("1010.432-24");
         paciente1.setUsuario(paciente);
         pacienteRepository.save(paciente1);
+
+        // Criar consultas
+        Consulta consulta1 = new Consulta();
+        consulta1.setMedico(medico1);
+        consulta1.setPaciente(paciente1);
+        consulta1.setDataHora(LocalDateTime.of(2025,10,12,15,30));
+        consulta1.setObservacao("Sem observações");
+        consulta1.setStatusConsulta(StatusConsulta.AGENDADA);
+        consultaRepository.save(consulta1);
 
         System.out.println("Dados iniciais carregados com sucesso!");
     }
