@@ -3,7 +3,6 @@ package projeto_tomorrow.demo.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-import projeto_tomorrow.demo.DTO.ConsultaDTO.ConsultaDTORequest;
 import projeto_tomorrow.demo.Entity.Consulta;
 import projeto_tomorrow.demo.Entity.PerfilMedico;
 import projeto_tomorrow.demo.Entity.PerfilPaciente;
