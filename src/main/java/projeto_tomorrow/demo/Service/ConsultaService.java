@@ -23,10 +23,10 @@ public class ConsultaService {
     private final PacienteRepository pacienteRepository;
 
     public Consulta criarConsulta(ConsultaDTORequest dto) {
-        PerfilMedico medico = medicoRepository.findById(dto.medicoId())
+        PerfilMedico medico = medicoRepository.findById(dto.medico().getId())
                 .orElseThrow(() -> new NotFoundException("Médico não encontrado"));
         
-        PerfilPaciente paciente = pacienteRepository.findById(dto.pacienteId())
+        PerfilPaciente paciente = pacienteRepository.findById(dto.paciente().getId())
                 .orElseThrow(() -> new NotFoundException("Paciente não encontrado"));
 
         Consulta consulta = new Consulta();
@@ -51,14 +51,14 @@ public class ConsultaService {
     public Consulta atualizarConsulta(Long id, ConsultaDTORequest request) {
         Consulta consulta = buscarPorId(id);
         
-        if (request.medicoId() != null) {
-            PerfilMedico medico = medicoRepository.findById(request.medicoId())
+        if (request.medico().getId() != null) {
+            PerfilMedico medico = medicoRepository.findById(request.medico().getId())
                     .orElseThrow(() -> new NotFoundException("Médico não encontrado"));
             consulta.setMedico(medico);
         }
         
-        if (request.pacienteId() != null) {
-            PerfilPaciente paciente = pacienteRepository.findById(request.pacienteId())
+        if (request.paciente().getId() != null) {
+            PerfilPaciente paciente = pacienteRepository.findById(request.paciente().getId())
                     .orElseThrow(() -> new NotFoundException("Paciente não encontrado"));
             consulta.setPaciente(paciente);
         }
