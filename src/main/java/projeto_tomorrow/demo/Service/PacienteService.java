@@ -8,6 +8,7 @@ import projeto_tomorrow.demo.Entity.User;
 import projeto_tomorrow.demo.Entity.enums.UserRole;
 import projeto_tomorrow.demo.Exceptions.CpfAlreadyExistsException;
 import projeto_tomorrow.demo.Exceptions.NotFoundException;
+import projeto_tomorrow.demo.Repository.ConsultaRepository;
 import projeto_tomorrow.demo.Repository.PacienteRepository;
 import projeto_tomorrow.demo.Repository.UserRepository;
 
@@ -16,10 +17,12 @@ import java.util.List;
 @Service
 public class PacienteService {
 
+    private final ConsultaRepository consultaRepository;
     private final PacienteRepository pacienteRepository;
     private final UserRepository userRepository;
 
-    public PacienteService(PacienteRepository pacienteRepository, UserRepository userRepository) {
+    public PacienteService(ConsultaRepository consultaRepository, PacienteRepository pacienteRepository, UserRepository userRepository) {
+        this.consultaRepository = consultaRepository;
         this.pacienteRepository = pacienteRepository;
         this.userRepository = userRepository;
     }
@@ -68,6 +71,22 @@ public class PacienteService {
                  paciente.getTelefone(),
                  paciente.getConvenio(),
                  paciente.getNumeroCarteirinha());
+    }
+
+    public List<PacienteDTOResponse> listarPacientesDoMedico(User medico) {
+        List<PerfilPaciente> pacientes = consultaRepository.findPacientesByMedicoId(medico.getId());
+
+        return pacientes.stream()
+                .map(p -> new PacienteDTOResponse(
+                        p.getUsuario().getNome(),
+                        p.getUsuario().getEmail(),
+                        p.getDataNascimento(),
+                        p.getCpf(),
+                        p.getTelefone(),
+                        p.getConvenio(),
+                        p.getNumeroCarteirinha()
+                ))
+                .toList();
     }
 
     public PacienteDTOResponse atualizar(Long id, PacienteDTORequest dto){

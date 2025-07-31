@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import projeto_tomorrow.demo.DTO.PacientesDTO.PacienteDTORequest;
 import projeto_tomorrow.demo.DTO.PacientesDTO.PacienteDTOResponse;
+import projeto_tomorrow.demo.Entity.User;
 import projeto_tomorrow.demo.Service.PacienteService;
 
 import java.util.List;
@@ -30,6 +31,11 @@ public class PacienteController {
         return ResponseEntity.ok(pacienteService.listarTodos());
     }
 
+    @GetMapping("/minhas-consultas")
+    public ResponseEntity<List<PacienteDTOResponse>> listarParaMedicos (User medico){
+        return ResponseEntity.ok(pacienteService.listarPacientesDoMedico(medico));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<PacienteDTOResponse> listarPorId(@PathVariable Long id){
         return ResponseEntity.ok(pacienteService.listarPorId(id));
@@ -41,7 +47,7 @@ public class PacienteController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<PacienteDTOResponse> deletart(@PathVariable Long id){
+    public ResponseEntity<PacienteDTOResponse> deletar(@PathVariable Long id){
         pacienteService.deletar(id);
         return ResponseEntity.noContent().build();
     }

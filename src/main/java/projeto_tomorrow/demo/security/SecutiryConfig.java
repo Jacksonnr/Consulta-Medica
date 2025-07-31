@@ -32,7 +32,15 @@ public class SecutiryConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST,"/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/consultas/**").hasAnyRole("PACIENTE", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/consultas/**").hasAnyRole("MEDICO", "PACIENTE", "ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/consultas/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/consultas/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/medico/**").hasAnyRole("MEDICO", "PACIENTE", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/medico/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/medico/**").hasRole("ADMIN")
+                        .requestMatchers("/usuario/**").hasRole("ADMIN")
+                        .requestMatchers("/paciente/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
