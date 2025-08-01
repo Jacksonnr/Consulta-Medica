@@ -29,8 +29,10 @@ public class SecutiryConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
+                .headers(headers -> headers.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers(HttpMethod.POST,"/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/consultas/**").hasAnyRole("PACIENTE", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/consultas/**").hasAnyRole("MEDICO", "PACIENTE", "ADMIN")

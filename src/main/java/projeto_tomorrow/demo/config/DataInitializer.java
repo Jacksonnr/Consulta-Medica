@@ -2,6 +2,7 @@ package projeto_tomorrow.demo.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import projeto_tomorrow.demo.Entity.Consulta;
 import projeto_tomorrow.demo.Entity.PerfilMedico;
@@ -27,6 +28,7 @@ public class DataInitializer implements CommandLineRunner {
     private final MedicoRepository medicoRepository;
     private final PacienteRepository pacienteRepository;
     private final ConsultaRepository consultaRepository;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Override
@@ -35,21 +37,21 @@ public class DataInitializer implements CommandLineRunner {
         User user1 = new User();
         user1.setNome("Dr. João Silva");
         user1.setEmail("joao.silva@hospital.com");
-        user1.setSenha("123456");
+        user1.setSenha(passwordEncoder.encode("123456"));
         user1.setRole(UserRole.MEDICO);
         User savedUser1 = userRepository.save(user1);
 
         User user2 = new User();
         user2.setNome("Dra. Maria Santos");
         user2.setEmail("maria.santos@hospital.com");
-        user2.setSenha("123456");
+        user2.setSenha(passwordEncoder.encode("123456"));
         user2.setRole(UserRole.MEDICO);
         User savedUser2 = userRepository.save(user2);
 
         User user3 = new User();
         user3.setNome("Dr. Pedro Costa");
         user3.setEmail("pedro.costa@hospital.com");
-        user3.setSenha("123456");
+        user3.setSenha(passwordEncoder.encode("123456"));
         user3.setRole(UserRole.MEDICO);
         User savedUser3 = userRepository.save(user3);
 
@@ -57,7 +59,7 @@ public class DataInitializer implements CommandLineRunner {
         User paciente = new User();
         paciente.setNome("Ana Oliveira");
         paciente.setEmail("ana.oliveira@email.com");
-        paciente.setSenha("123456");
+        paciente.setSenha(passwordEncoder.encode("123456"));
         paciente.setRole(UserRole.PACIENTE);
         userRepository.save(paciente);
 
@@ -95,6 +97,15 @@ public class DataInitializer implements CommandLineRunner {
         consulta1.setObservacao("Sem observações");
         consulta1.setStatusConsulta(StatusConsulta.AGENDADA);
         consultaRepository.save(consulta1);
+
+        // Criar Admin
+        User userAdmin = new User();
+        userAdmin.setNome("Admin");
+        userAdmin.setEmail("admin@admin");
+        userAdmin.setSenha(passwordEncoder.encode("admin"));
+        userAdmin.setRole(UserRole.ADMIN);
+        User saveAdmin = userRepository.save(userAdmin);
+
 
         System.out.println("Dados iniciais carregados com sucesso!");
     }
