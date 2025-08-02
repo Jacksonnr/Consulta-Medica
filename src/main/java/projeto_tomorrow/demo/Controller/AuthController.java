@@ -12,6 +12,7 @@ import projeto_tomorrow.demo.DTO.LoginDTO.LoginRequestDTO;
 import projeto_tomorrow.demo.DTO.LoginDTO.LoginResponseDTO;
 import projeto_tomorrow.demo.Entity.User;
 import projeto_tomorrow.demo.Exceptions.NotFoundException;
+import projeto_tomorrow.demo.Exceptions.PasswordInvalidException;
 import projeto_tomorrow.demo.Repository.UserRepository;
 import projeto_tomorrow.demo.security.TokenService;
 
@@ -34,7 +35,7 @@ public class AuthController {
             String token = this.tokenService.generateToken(user);
             return ResponseEntity.ok(new LoginResponseDTO(user.getEmail(), token));
         }
-        return ResponseEntity.status(401).body("Senha inválida");
+        return ResponseEntity.ok(new PasswordInvalidException("Senha inválida"));
     }
 
 }
