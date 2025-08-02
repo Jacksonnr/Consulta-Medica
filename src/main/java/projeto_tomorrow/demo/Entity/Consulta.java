@@ -36,4 +36,7 @@ public class Consulta {
     @Column(nullable = false)
     private StatusConsulta statusConsulta;
 
+    @ManyToOne
+    private Consulta consultaOriginal;
+
 }

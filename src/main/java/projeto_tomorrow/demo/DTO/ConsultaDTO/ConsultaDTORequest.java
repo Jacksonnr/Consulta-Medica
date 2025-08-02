@@ -7,8 +7,8 @@ import projeto_tomorrow.demo.Entity.enums.StatusConsulta;
 import java.time.LocalDateTime;
 
 public record ConsultaDTORequest (
-        PerfilMedico medico,
-        PerfilPaciente paciente,
+        Long medicoId,
+        Long pacienteId,
         LocalDateTime dataHora,
         String observacao,
         StatusConsulta statusConsulta

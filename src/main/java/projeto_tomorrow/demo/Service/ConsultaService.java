@@ -3,6 +3,8 @@ package projeto_tomorrow.demo.Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import projeto_tomorrow.demo.DTO.ConsultaDTO.ConsultaDTORequest;
+import projeto_tomorrow.demo.DTO.ConsultaDTO.ConsultaDTOResponse;
+import projeto_tomorrow.demo.DTO.ConsultaDTO.ReconsultaDTORequest;
 import projeto_tomorrow.demo.Entity.Consulta;
 import projeto_tomorrow.demo.Entity.PerfilMedico;
 import projeto_tomorrow.demo.Entity.PerfilPaciente;
@@ -12,7 +14,9 @@ import projeto_tomorrow.demo.Repository.ConsultaRepository;
 import projeto_tomorrow.demo.Repository.MedicoRepository;
 import projeto_tomorrow.demo.Repository.PacienteRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,86 +26,160 @@ public class ConsultaService {
     private final MedicoRepository medicoRepository;
     private final PacienteRepository pacienteRepository;
 
-    public Consulta criarConsulta(ConsultaDTORequest dto) {
-        PerfilMedico medico = medicoRepository.findById(dto.medico().getId())
-                .orElseThrow(() -> new NotFoundException("Médico não encontrado"));
+    public ConsultaDTOResponse criarConsulta (ConsultaDTORequest dto){
+        PerfilMedico medico = medicoRepository.findById(dto.medicoId())
+                .orElseThrow(() -> new NotFoundException("Medico não encontrado"));
         
-        PerfilPaciente paciente = pacienteRepository.findById(dto.paciente().getId())
+        PerfilPaciente paciente = pacienteRepository.findById(dto.pacienteId())
                 .orElseThrow(() -> new NotFoundException("Paciente não encontrado"));
-
+        
         Consulta consulta = new Consulta();
         consulta.setMedico(medico);
         consulta.setPaciente(paciente);
-        consulta.setDataHora(dto.dataHora());
+        consulta.setDataHora(LocalDateTime.now());
         consulta.setObservacao(dto.observacao());
-        consulta.setStatusConsulta(dto.statusConsulta());
-
-        return consultaRepository.save(consulta);
-    }
-
-    public List<Consulta> listarTodasConsultas() {
-        return consultaRepository.findAll();
-    }
-
-    public Consulta buscarPorId(Long id) {
-        return consultaRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Consulta não encontrada"));
-    }
-
-    public Consulta atualizarConsulta(Long id, ConsultaDTORequest request) {
-        Consulta consulta = buscarPorId(id);
+        consulta.setStatusConsulta(StatusConsulta.AGENDADA);
         
-        if (request.medico().getId() != null) {
-            PerfilMedico medico = medicoRepository.findById(request.medico().getId())
-                    .orElseThrow(() -> new NotFoundException("Médico não encontrado"));
+        consultaRepository.save(consulta);
+        
+        return new ConsultaDTOResponse(
+                medico.getUsuario().getNome(),
+                paciente.getUsuario().getNome(),
+                consulta.getDataHora(),
+                consulta.getObservacao(),
+                consulta.getStatusConsulta()
+        );
+        
+    }
+
+    public List<ConsultaDTOResponse> listAll() {
+        List<Consulta> consultas = consultaRepository.findAll();
+        return consultas.stream()
+                .map(consulta -> new ConsultaDTOResponse(
+                        consulta.getMedico().getUsuario().getNome(),
+                        consulta.getPaciente().getUsuario().getNome(),
+                        consulta.getDataHora(),
+                        consulta.getObservacao(),
+                        consulta.getStatusConsulta()
+                )).collect(Collectors.toList());
+    }
+    
+    public ConsultaDTOResponse findById(Long id) {
+        Consulta consulta = consultaRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Consulta não encontrada"));
+        return new ConsultaDTOResponse(
+                consulta.getMedico().getUsuario().getNome(),
+                consulta.getPaciente().getUsuario().getNome(),
+                consulta.getDataHora(),
+                consulta.getObservacao(),
+                consulta.getStatusConsulta()
+        );
+    }
+    
+    public ConsultaDTOResponse update(Long id, ConsultaDTORequest dto) {
+        Consulta consulta = consultaRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Consulta não encontrada"));
+        
+        if (dto.medicoId() != null) {
+            PerfilMedico medico = medicoRepository.findById(dto.medicoId())
+                    .orElseThrow(() -> new NotFoundException("Medico não encontrado"));
             consulta.setMedico(medico);
         }
         
-        if (request.paciente().getId() != null) {
-            PerfilPaciente paciente = pacienteRepository.findById(request.paciente().getId())
+        if (dto.pacienteId() != null) {
+            PerfilPaciente paciente = pacienteRepository.findById(dto.pacienteId())
                     .orElseThrow(() -> new NotFoundException("Paciente não encontrado"));
             consulta.setPaciente(paciente);
         }
         
-        if (request.dataHora() != null) {
-            consulta.setDataHora(request.dataHora());
+        if (dto.observacao() != null && !dto.observacao().isEmpty()) {
+            consulta.setObservacao(dto.observacao());
         }
         
-        if (request.observacao() != null) {
-            consulta.setObservacao(request.observacao());
-        }
+        consultaRepository.save(consulta);
         
-        if (request.statusConsulta() != null) {
-            consulta.setStatusConsulta(request.statusConsulta());
-        }
-
-        return consultaRepository.save(consulta);
+        return new ConsultaDTOResponse(
+                consulta.getMedico().getUsuario().getNome(),
+                consulta.getPaciente().getUsuario().getNome(),
+                consulta.getDataHora(),
+                consulta.getObservacao(),
+                consulta.getStatusConsulta()
+        );
     }
-
-    public void deletarConsulta(Long id) {
-        Consulta consulta = buscarPorId(id);
+    
+    public List<ConsultaDTOResponse> findByStatus(StatusConsulta status) {
+        List<Consulta> consultas = consultaRepository.findByStatusConsulta(status);
+        return consultas.stream()
+                .map(consulta -> new ConsultaDTOResponse(
+                        consulta.getMedico().getUsuario().getNome(),
+                        consulta.getPaciente().getUsuario().getNome(),
+                        consulta.getDataHora(),
+                        consulta.getObservacao(),
+                        consulta.getStatusConsulta()
+                )).collect(Collectors.toList());
+    }
+    
+    public void delete(Long id) {
+        Consulta consulta = consultaRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Consulta não encontrada"));
         consultaRepository.delete(consulta);
     }
 
-    public Consulta confirmarConsulta(Long id) {
-        Consulta consulta = buscarPorId(id);
-        consulta.setStatusConsulta(StatusConsulta.CONFIRMADA);
-        return consultaRepository.save(consulta);
+    public ConsultaDTOResponse consultaRealizada(Long id) {
+        return atualizarStatus(id, StatusConsulta.REALIZADA);
     }
-
-    public Consulta cancelarConsulta(Long id) {
-        Consulta consulta = buscarPorId(id);
-        consulta.setStatusConsulta(StatusConsulta.CANCELADA);
-        return consultaRepository.save(consulta);
+    
+    public ConsultaDTOResponse concluirConsulta(Long id) {
+        return atualizarStatus(id, StatusConsulta.CONCLUIDA);
     }
+    
+    public ConsultaDTOResponse cancelarConsulta(Long id) {
+        return atualizarStatus(id, StatusConsulta.CANCELADA);
+    }
+    
+    public ConsultaDTOResponse reconsulta(Long id, ReconsultaDTORequest dto) {
+        Consulta consulta = consultaRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Consulta não encontrada"));
 
-    public Consulta concluirConsulta(Long id, String observacao) {
-        Consulta consulta = buscarPorId(id);
-        consulta.setStatusConsulta(StatusConsulta.CONCLUIDA);
-        if (observacao != null && !observacao.trim().isEmpty()) {
-            consulta.setObservacao(observacao);
+        if (!consulta.getStatusConsulta().equals(StatusConsulta.REALIZADA)) {
+            throw new IllegalArgumentException("A reconsulta só pode ser feita a partir de uma consulta realizada.");
         }
-        return consultaRepository.save(consulta);
+
+        if (dto.nomeMedico() != null){
+            consulta.setMedico(dto.nomeMedico());
+        }
+
+        consulta.setDataHora(LocalDateTime.now());
+        consulta.setObservacao(dto.observacao());
+        consulta.setStatusConsulta(StatusConsulta.RECONSULTA);
+
+        consultaRepository.save(consulta);
+
+        return new ConsultaDTOResponse(
+                consulta.getMedico().getUsuario().getNome(),
+                consulta.getPaciente().getUsuario().getNome(),
+                consulta.getDataHora(),
+                consulta.getObservacao(),
+                consulta.getStatusConsulta()
+        );
+
     }
+    
+    private ConsultaDTOResponse atualizarStatus(Long id, StatusConsulta novoStatus) {
+        Consulta consulta = consultaRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Consulta não encontrada"));
+        
+        consulta.setStatusConsulta(novoStatus);
+        consultaRepository.save(consulta);
+        
+        return new ConsultaDTOResponse(
+                consulta.getMedico().getUsuario().getNome(),
+                consulta.getPaciente().getUsuario().getNome(),
+                consulta.getDataHora(),
+                consulta.getObservacao(),
+                consulta.getStatusConsulta()
+        );
+    }
+
 
 }

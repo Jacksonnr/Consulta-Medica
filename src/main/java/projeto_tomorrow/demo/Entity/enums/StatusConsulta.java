@@ -6,7 +6,7 @@ import lombok.Getter;
 public enum StatusConsulta {
 
     AGENDADA("Agendada"),
-    CONFIRMADA("Confirmada"),
+    REALIZADA("Realizada"),
     CONCLUIDA("Concluída"),
     CANCELADA("Cancelada"),
     RECONSULTA("Reconsulta");

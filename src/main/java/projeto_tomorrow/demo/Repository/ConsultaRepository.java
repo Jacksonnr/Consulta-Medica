@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import projeto_tomorrow.demo.Entity.Consulta;
 import projeto_tomorrow.demo.Entity.PerfilPaciente;
+import projeto_tomorrow.demo.Entity.enums.StatusConsulta;
 
 import java.util.List;
 
@@ -24,6 +25,8 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
     @Query("SELECT c.paciente FROM Consulta c " +
             "WHERE c.medico.id = :medicoId")
     List<PerfilPaciente> findPacientesByMedicoId(@Param("medicoId") Long medicoId);
+
+    List<Consulta> findByStatusConsulta(StatusConsulta statusConsulta);
 
 }
 
