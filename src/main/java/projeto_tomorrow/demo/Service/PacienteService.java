@@ -1,5 +1,6 @@
 package projeto_tomorrow.demo.Service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import projeto_tomorrow.demo.DTO.PacientesDTO.PacienteDTORequest;
 import projeto_tomorrow.demo.DTO.PacientesDTO.PacienteDTOResponse;
@@ -20,11 +21,13 @@ public class PacienteService {
     private final ConsultaRepository consultaRepository;
     private final PacienteRepository pacienteRepository;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public PacienteService(ConsultaRepository consultaRepository, PacienteRepository pacienteRepository, UserRepository userRepository) {
+    public PacienteService(ConsultaRepository consultaRepository, PacienteRepository pacienteRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.consultaRepository = consultaRepository;
         this.pacienteRepository = pacienteRepository;
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public PacienteDTOResponse criar(PacienteDTORequest dto){
@@ -36,7 +39,7 @@ public class PacienteService {
         User usuario = new User();
         usuario.setNome(dto.nome());
         usuario.setEmail(dto.email());
-        usuario.setSenha(dto.senha());
+        usuario.setSenha(passwordEncoder.encode(dto.senha()));
         usuario.setRole(UserRole.PACIENTE);
 
         User usuarioSalvo = userRepository.save(usuario);
@@ -94,6 +97,7 @@ public class PacienteService {
                 .orElseThrow(() -> new NotFoundException("Paciente não encontrado com o id informado"));
 
         paciente.getUsuario().setNome(dto.nome());
+        paciente.getUsuario().setEmail(dto.email());
         paciente.setDataNascimento(dto.dataNascimento());
         paciente.setCpf(dto.cpf());
         paciente.setTelefone(dto.telefone());
