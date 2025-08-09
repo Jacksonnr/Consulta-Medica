@@ -108,5 +108,6 @@ public class DataInitializer implements CommandLineRunner {
 
 
         System.out.println("Dados iniciais carregados com sucesso!");
+        System.out.println("teste");
     }
 }
