@@ -32,8 +32,8 @@ public class ConsultaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ConsultaDTOResponse> findById (Long id){
-        return ResponseEntity.status(HttpStatus.OK).body(consultaService.findById(id));
+    public ResponseEntity<ConsultaDTOResponse> findById (@PathVariable Long id){
+        return ResponseEntity.ok(consultaService.findById(id));
     }
 
     @PutMapping("/{id}")
@@ -46,17 +46,17 @@ public class ConsultaController {
         return ResponseEntity.status(HttpStatus.OK).body(consultaService.consultaRealizada(id));
     }
 
-    @PutMapping("/concluirConsulta")
+    @PutMapping("/concluirConsulta/{id}")
     public ResponseEntity<ConsultaDTOResponse> concluirConsulta (@PathVariable("id") Long id){
         return ResponseEntity.status(HttpStatus.OK).body(consultaService.concluirConsulta(id));
     }
 
-    @PutMapping("/cancelarConsulta")
+    @PutMapping("/cancelarConsulta/{id}")
     public ResponseEntity<ConsultaDTOResponse> cancelarConsulta (@PathVariable("id") Long id){
         return ResponseEntity.status(HttpStatus.OK).body(consultaService.cancelarConsulta(id));
     }
 
-    @PostMapping("/reconsulta")
+    @PostMapping("/reconsulta/{id}")
     public ResponseEntity<ConsultaDTOResponse> marcarReconsulta (@PathVariable("id") Long id,
                                                                  @RequestBody ReconsultaDTORequest dto){
         ConsultaDTOResponse consultaDTOResponse = consultaService.reconsulta(id, dto);

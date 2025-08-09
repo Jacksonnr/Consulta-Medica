@@ -1,13 +1,9 @@
 package projeto_tomorrow.demo.Controller;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import projeto_tomorrow.demo.DTO.LoginDTO.LoginRequestDTO;
 import projeto_tomorrow.demo.DTO.LoginDTO.LoginResponseDTO;
 import projeto_tomorrow.demo.Entity.User;
@@ -15,7 +11,6 @@ import projeto_tomorrow.demo.Exceptions.NotFoundException;
 import projeto_tomorrow.demo.Exceptions.PasswordInvalidException;
 import projeto_tomorrow.demo.Repository.UserRepository;
 import projeto_tomorrow.demo.security.TokenService;
-
 
 @RestController
 @RequestMapping("/auth")
@@ -27,15 +22,15 @@ public class AuthController {
     private final TokenService tokenService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login (@RequestBody LoginRequestDTO dto){
-        User user = this.userRepository.findByEmail(dto.email())
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO dto) {
+        User user = userRepository.findByEmail(dto.email())
                 .orElseThrow(() -> new NotFoundException("Usuário não encontrado"));
 
-        if(passwordEncoder.matches(dto.password(), user.getSenha())){
-            String token = this.tokenService.generateToken(user);
-            return ResponseEntity.ok(new LoginResponseDTO(user.getEmail(), token));
+        if (!passwordEncoder.matches(dto.password(), user.getSenha())) {
+            throw new PasswordInvalidException("Senha inválida");
         }
-        return ResponseEntity.ok(new PasswordInvalidException("Senha inválida"));
-    }
 
+        String token = tokenService.generateToken(user);
+        return ResponseEntity.ok(new LoginResponseDTO(user.getEmail(), token));
+    }
 }

@@ -1,5 +1,6 @@
 package projeto_tomorrow.demo.Service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import projeto_tomorrow.demo.DTO.MedicosDTO.MedicoDTORequest;
 import projeto_tomorrow.demo.DTO.MedicosDTO.MedicoDTOResponse;
@@ -20,10 +21,12 @@ public class MedicoService {
 
     private final MedicoRepository medicoRepository;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public MedicoService(MedicoRepository medicoRepository, UserRepository userRepository) {
+    public MedicoService(MedicoRepository medicoRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.medicoRepository = medicoRepository;
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public MedicoDTOResponse criar(MedicoDTORequest dto) {
@@ -35,7 +38,7 @@ public class MedicoService {
         User usuario = new User();
         usuario.setNome(dto.nome());
         usuario.setEmail(dto.email());
-        usuario.setSenha(dto.senha());
+        usuario.setSenha(passwordEncoder.encode(dto.senha()));
         usuario.setRole(UserRole.MEDICO);
         
         User usuarioSalvo = userRepository.save(usuario);
