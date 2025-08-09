@@ -1,6 +1,5 @@
 package projeto_tomorrow.demo.security;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,41 +28,44 @@ public class SecutiryConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .headers(headers -> headers.disable())
+                .headers(headers -> headers.frameOptions(frame -> frame.disable())) // Necessário p/ H2
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // H2 Console
                         .requestMatchers("/h2-console/**").permitAll()
 
-                        // Endpoint público
-                        .requestMatchers(HttpMethod.POST,"/auth/login").permitAll()
+                        // Swagger (todas as rotas necessárias)
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/webjars/**"
+                        ).permitAll()
 
-                        // Endpoint Admin, Paciente e Médico
-                     /*   .requestMatchers(HttpMethod.POST, "/consulta/**").hasAnyRole("PACIENTE", "ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/consulta/**").hasAnyRole("MEDICO", "PACIENTE", "ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/medico/**").hasAnyRole("MEDICO", "PACIENTE", "ADMIN")
-*/
-                        // Endpoints Admin apenas
-                        /*.requestMatchers(HttpMethod.PUT, "/consulta/**").hasRole("ADMIN")*/
-                        .requestMatchers( "/consulta/**").hasRole("ADMIN")
-                    /*  .requestMatchers(HttpMethod.POST, "/medico/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/medico/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/medico/**").hasRole("ADMIN")*/
+                        // Login
+                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+
+                        // Regras específicas
+                        .requestMatchers("/consulta/**").hasRole("ADMIN")
                         .requestMatchers("/usuario/**").hasRole("ADMIN")
                         .requestMatchers("/paciente/**").hasRole("ADMIN")
 
-                        .anyRequest().authenticated()
+                        // Restante precisa de autenticação
+                        .anyRequest().permitAll()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
-                return http.build();
+
+        return http.build();
     }
 
+
     @Bean
-    public PasswordEncoder passwordEncoder () {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public AuthenticationManager autenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception{
+    public AuthenticationManager autenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 }
