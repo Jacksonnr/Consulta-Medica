@@ -33,7 +33,7 @@ public class PacienteService {
     public PacienteDTOResponse criar(PacienteDTORequest dto){
         pacienteRepository.findByCpf(dto.cpf())
                 .ifPresent(existingEmail -> {
-                    throw new CpfAlreadyExistsException("CPF informado já cadastrado, recupere a senha!");
+                    throw new CpfAlreadyExistsException("O CPF informado já está cadastrado.");
                 });
 
         User usuario = new User();

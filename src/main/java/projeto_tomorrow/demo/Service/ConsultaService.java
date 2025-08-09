@@ -36,7 +36,7 @@ public class ConsultaService {
         Consulta consulta = new Consulta();
         consulta.setMedico(medico);
         consulta.setPaciente(paciente);
-        consulta.setDataHora(LocalDateTime.now());
+        consulta.setDataHora(dto.dataHora());
         consulta.setObservacao(dto.observacao());
         consulta.setStatusConsulta(StatusConsulta.AGENDADA);
         
@@ -149,7 +149,7 @@ public class ConsultaService {
             consulta.setMedico(dto.nomeMedico());
         }
 
-        consulta.setDataHora(LocalDateTime.now());
+        consulta.setDataHora(dto.dataHora());
         consulta.setObservacao(dto.observacao());
         consulta.setStatusConsulta(StatusConsulta.RECONSULTA);
 

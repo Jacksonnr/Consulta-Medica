@@ -1,5 +1,6 @@
 package projeto_tomorrow.demo.Controller;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ public class PacienteController {
     }
 
     @PostMapping
-    public ResponseEntity<PacienteDTOResponse> criar(@RequestBody PacienteDTORequest dto){
+    public ResponseEntity<PacienteDTOResponse> criar(@Valid @RequestBody PacienteDTORequest dto){
         PacienteDTOResponse paciente = pacienteService.criar(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(paciente);
     }
@@ -42,7 +43,7 @@ public class PacienteController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PacienteDTOResponse> atualizar(@PathVariable Long id, @RequestBody PacienteDTORequest dto){
+    public ResponseEntity<PacienteDTOResponse> atualizar(@PathVariable Long id, @RequestBody @Valid PacienteDTORequest dto){
         return ResponseEntity.ok(pacienteService.atualizar(id, dto));
     }
 

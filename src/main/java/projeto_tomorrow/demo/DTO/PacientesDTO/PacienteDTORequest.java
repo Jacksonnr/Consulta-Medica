@@ -13,15 +13,15 @@ public record PacienteDTORequest(
         @Email(message = "O email precisa ser válido")
         String email,
 
-        @Min(value = 8, message = "O campo 'senha' deve ter no mínimo 8 caracteres.")
+        @NotBlank(message = "O campo 'senha' é obrigatório.")
+        @Size(min = 8, message = "O campo 'senha' deve ter no mínimo 8 caracteres.")
         String senha,
 
         @Past(message = "A data de nascimento deve ser anterior à data atual.")
         LocalDate dataNascimento,
 
         @NotBlank(message = "O campo 'CPF' é obrigatório")
-        @Min(value = 11, message = "CPF inválido")
-        @Max(value = 14, message = "CPF inválido")
+        @Size(min = 11, max = 14, message = "CPF deve ter entre 11 e 14 caracteres")
         String cpf,
 
         @NotBlank(message = "O campo 'telefone' é obrigatório.")
