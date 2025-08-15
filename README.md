@@ -108,6 +108,10 @@ mvn spring-boot:run
 - Username: `sa`
 - Password: (vazio)
 
+### Pegar o Token como Admin
+- email: admin@admin
+- senha: admin
+
 ## 📝 Funcionalidades
 
 ### Gestão de Consultas
